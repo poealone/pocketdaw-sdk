@@ -54,6 +54,7 @@ aarch64-linux-gnu-gcc -shared -fPIC -O2 -o my-plugin.so simple-sampler.c -lm
 | `drum-machine` | Sampler | Multi-sample drum kit with MIDI note mapping |
 | `simple-sampler` | Sampler | Basic chromatic sampler |
 | `tape-delay` | Effect | Warm tape-style delay with filtered feedback |
+| `jt-sidechain` | Effect | Sidechain compressor with 6 presets (pump, duck, gate) |
 | `pulse-ring` | Visualizer | Audio-reactive GLSL shader (bass rings + beat flash) |
 
 Each example includes source code, a pre-compiled ARM64 `.so`, and a `manifest.json`.
