@@ -1,119 +1,108 @@
 # PocketDAW Plugin SDK
 
-Build custom synths and effects for [PocketDAW](https://pocketdaw.net) — the handheld DAW for Anbernic devices.
+Build custom synths, effects, and visualizers for [PocketDAW](https://pocketdaw.net) — the handheld DAW for Anbernic devices.
 
-## Overview
+## 📖 Documentation
 
-PocketDAW uses a C plugin API. Write a synth or effect, compile to `.so` (ARM64), and drop it into the plugins folder on your device.
+**Full docs → [docs.pocketdaw.net](http://docs.pocketdaw.net)**
 
-**SDK Version:** 2.1  
-**Minimum Compatible:** 1.0  
-**Target:** aarch64-linux (ARM64)
+- [SDK Overview](http://docs.pocketdaw.net/#/sdk/overview)
+- [Synth API Reference](http://docs.pocketdaw.net/#/sdk/synth-api)
+- [Effects API Reference](http://docs.pocketdaw.net/#/sdk/fx-api)
+- [Manifest Format](http://docs.pocketdaw.net/#/sdk/manifest)
+- [Sample Loading (v2)](http://docs.pocketdaw.net/#/sdk/samples)
+- [Building Plugins](http://docs.pocketdaw.net/#/sdk/building)
+- [Themes & Skins](http://docs.pocketdaw.net/#/sdk/themes)
+- [Visualizer Shaders](http://docs.pocketdaw.net/#/sdk/visualizers)
 
-## Getting Started
-
-### Requirements
-- ARM64 cross-compiler (`aarch64-none-linux-gnu-gcc` or similar)
-- Basic C knowledge
-- PocketDAW installed on your device
-
-### Quick Start
-
-```c
-#include "pdsynth_api.h"
-
-const char* pdsynth_name(void) { return "My Synth"; }
-int pdsynth_api_version(void) { return 2; }
-
-void* pdsynth_create(float sampleRate) {
-    // Allocate your state here
-    return calloc(1, sizeof(MyState));
-}
-
-void pdsynth_destroy(void* instance) {
-    free(instance);
-}
-
-void pdsynth_process(void* instance, PdSynthAudio* audio) {
-    // Generate audio into audio->outputL and audio->outputR
-}
-
-void pdsynth_note_on(void* instance, uint8_t note, uint8_t vel) {
-    // Handle MIDI note
-}
-
-void pdsynth_note_off(void* instance, uint8_t note) {
-    // Handle note release
-}
-```
-
-### Build
+## Quick Start
 
 ```bash
-aarch64-none-linux-gnu-gcc -shared -fPIC -O2 -o my-synth.so my-synth.c -lm
+git clone https://github.com/poealone/pocketdaw-sdk
+cd pocketdaw-sdk
+
+# Copy an example as your starting point
+cp -r examples/simple-sampler my-plugin
+cd my-plugin
+
+# Edit source and manifest
+vim simple-sampler.c
+vim manifest.json
+
+# Cross-compile for ARM64
+aarch64-linux-gnu-gcc -shared -fPIC -O2 -o my-plugin.so simple-sampler.c -lm
+
+# Deploy: copy to device SD card
+# → MUOS/application/PocketDAW/plugins/synths/my-plugin/
 ```
-
-### Install
-
-1. Copy `my-synth.so` + `manifest.json` to `PocketDAW/plugins/synths/my-synth/` on your SD card
-2. Restart PocketDAW
-3. Select your synth from the MIDI track synth list
 
 ## API Headers
 
-| File | Description |
-|------|-------------|
-| `pdsynth_api.h` | Synth/sampler plugin API (instruments) |
-| `pdfx_api.h` | Effects plugin API (FX chain processors) |
+| File | Version | Description |
+|------|---------|-------------|
+| `pdsynth_api.h` | v2 | Synth/sampler plugin API — MIDI input, audio output, sample loading |
+| `pdfx_api.h` | v1 | Effects plugin API — stereo audio processing in the mixer FX chain |
 
 ## Examples
 
 | Plugin | Type | Description |
 |--------|------|-------------|
-| `jt-synth` | Subtractive | Dual oscillator with unison voicing |
-| `fm-synth` | FM | 4-operator FM synthesis |
-| `wavetable` | Wavetable | Wavetable scanning synth |
-| `granular` | Granular | Granular texture engine |
-| `drum-machine` | Sampler | Multi-sample drum kit |
+| `jt-synth` | Synth | Dual oscillator with morphable waveforms, ladder filter, custom skin |
+| `fm-synth` | Synth | 4-operator FM synthesis with 8 algorithms |
+| `wavetable` | Synth | 64-frame wavetable with LFO position scanning |
+| `granular` | Synth | Granular texture engine with v2 sample loading |
+| `drum-machine` | Sampler | Multi-sample drum kit with MIDI note mapping |
 | `simple-sampler` | Sampler | Basic chromatic sampler |
-| `tape-delay` | Effect | Tape-style delay effect |
-| `pulse-ring` | Synth | Pulse wave ring modulator |
+| `tape-delay` | Effect | Warm tape-style delay with filtered feedback |
+| `pulse-ring` | Visualizer | Audio-reactive GLSL shader (bass rings + beat flash) |
 
-Each example includes source code, a compiled `.so`, and a `manifest.json`.
+Each example includes source code, a pre-compiled ARM64 `.so`, and a `manifest.json`.
 
-## manifest.json
+## Plugin Types
 
-Every plugin needs a manifest file:
+### Synths (`pdsynth_api.h`)
+Generate audio from MIDI notes. Placed on MIDI tracks.
+- Required: `pdsynth_create`, `pdsynth_destroy`, `pdsynth_process`, `pdsynth_note`
+- Optional: presets, waveform visualization, host sample loading (v2)
 
-```json
-{
-    "name": "My Synth",
-    "author": "Your Name",
-    "version": "1.0.0",
-    "description": "What it does",
-    "type": "synth",
-    "library": "my-synth.so",
-    "params": [
-        { "name": "Attack", "default": 0.01 },
-        { "name": "Decay", "default": 0.1 }
-    ]
-}
+### Effects (`pdfx_api.h`)
+Process stereo audio in the mixer FX chain. 2 slots per channel strip.
+- Required: `pdfx_create`, `pdfx_destroy`, `pdfx_process`
+- Optional: presets, parameter names
+
+### Visualizers (GLSL)
+Audio-reactive fragment shaders rendered via OpenGL ES 2.0.
+- Uniforms: `u_bass`, `u_mid`, `u_high`, `u_beat`, `u_volume`, `u_time`
+- Up to 2 user-adjustable parameters
+
+## Directory Structure
+
 ```
-
-## v2 Features (New)
-
-- **Sample Loading API** — load WAV files through host callbacks
-- **Host Callbacks** — request samples, query host state
-- **Up to 128 samples per plugin**
+plugins/
+├── synths/my-synth/
+│   ├── my-synth.so        # ARM64 shared library
+│   ├── manifest.json      # Metadata + params
+│   ├── skin.bmp           # Optional: 320×240 background
+│   └── samples/           # Optional: WAV files
+├── fx/my-effect/
+│   ├── my-effect.so
+│   └── manifest.json
+└── visualizers/my-viz/
+    ├── shader.frag
+    └── manifest.json
+```
 
 ## Community
 
 - **Website:** [pocketdaw.net](https://pocketdaw.net)
+- **Docs:** [docs.pocketdaw.net](http://docs.pocketdaw.net)
 - **Forum:** [community.pocketdaw.net](https://community.pocketdaw.net)
 - **Downloads:** [pocketdaw.net/download](https://pocketdaw.net/download)
 
-Share your plugins on the [community forum](https://community.pocketdaw.net) in the Plugins & Presets category!
+Share your plugins on the [community forum](https://community.pocketdaw.net) under Plugins & Presets!
 
 ## License
 
-MIT — free to use, modify, and distribute.
+SDK headers and examples are **MIT licensed** — free to use, modify, and distribute.
+
+PocketDAW itself is proprietary — free to use.
