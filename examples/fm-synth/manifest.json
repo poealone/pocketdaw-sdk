@@ -1,0 +1,21 @@
+{
+    "name": "FM Synth",
+    "author": "PocketDAW",
+    "version": "1.0",
+    "description": "2-operator FM synthesis — classic electric pianos, bells, and basses",
+    "api_version": 1,
+    "library": "fm-synth.so",
+    "params": [
+        { "name": "Mod Ratio",  "type": "float", "min": 0.5, "max": 8.0, "default": 2.0 },
+        { "name": "Mod Depth",  "type": "float", "min": 0.0, "max": 8.0, "default": 2.4 },
+        { "name": "Attack",     "type": "float", "min": 0.001, "max": 0.5, "default": 0.01 },
+        { "name": "Release",    "type": "float", "min": 0.01, "max": 2.0, "default": 0.3 },
+        { "name": "Brightness", "type": "float", "min": 0.0, "max": 1.0, "default": 0.5 },
+        { "name": "Detune",     "type": "float", "min": 0.0, "max": 1.0, "default": 0.0 }
+    ],
+    "tags": ["fm", "keys", "bell", "bass", "electric-piano"],
+    "ui": {
+        "accent": [0, 200, 255],
+        "layout": "knobs"
+    }
+}

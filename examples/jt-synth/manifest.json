@@ -1,0 +1,33 @@
+{
+    "name": "JT Synth",
+    "version": "2.0.0",
+    "author": "Johnytiger",
+    "description": "Dual-oscillator wavetable synth with morphable waveforms, mix control, ladder filter, and presets",
+    "type": "synth",
+    "library": "jt-synth.so",
+    "params": [
+        { "name": "Osc1Wave",  "default": 0.55 },
+        { "name": "Osc2Wave",  "default": 0.0  },
+        { "name": "Osc2Vol",   "default": 0.0  },
+        { "name": "Detune",    "default": 0.08 },
+        { "name": "Attack",    "default": 0.01 },
+        { "name": "Decay",     "default": 0.15 },
+        { "name": "Sustain",   "default": 0.8  },
+        { "name": "Release",   "default": 0.15 },
+        { "name": "Cutoff",    "default": 0.75 },
+        { "name": "Resonance", "default": 0.2  }
+    ],
+    "ui": {
+        "accent": [255, 30, 60],
+        "layout": "knobs",
+        "pages": true,
+        "viz": {
+            "type": "waveform",
+            "x": 6, "y": 14,
+            "w": 300, "h": 32,
+            "color": [255, 30, 60],
+            "reactive": true,
+            "bars": 16
+        }
+    }
+}

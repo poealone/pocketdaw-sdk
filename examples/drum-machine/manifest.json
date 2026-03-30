@@ -1,0 +1,80 @@
+{
+    "name": "Drum Machine",
+    "author": "PocketDAW",
+    "version": "1.0",
+    "description": "Synthesized drum kit \u2014 kick, snare, hats, clap, rim, tom. Notes mapped to GM drum standard.",
+    "params": [
+        {
+            "name": "Kick Tune",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.4
+        },
+        {
+            "name": "Kick Decay",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Snare Tone",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Snare Snap",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Hat Tone",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Hat Decay",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.3
+        },
+        {
+            "name": "Drive",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.3
+        },
+        {
+            "name": "Room",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2
+        }
+    ],
+    "tags": [
+        "drums",
+        "percussion",
+        "808",
+        "beats"
+    ],
+    "note_map": {
+        "36": "Kick",
+        "38": "Snare",
+        "42": "Closed Hat",
+        "46": "Open Hat",
+        "37": "Rimshot",
+        "39": "Clap",
+        "44": "Pedal Hat",
+        "45": "Tom"
+    },
+    "ui": {
+        "accent": [
+            255,
+            50,
+            80
+        ],
+        "layout": "knobs"
+    }
+}

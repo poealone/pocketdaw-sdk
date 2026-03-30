@@ -1,0 +1,25 @@
+{
+    "name": "Simple Sampler",
+    "author": "PocketDAW",
+    "version": "1.0.0",
+    "description": "Sample-based synth — loads WAV files and plays them pitched across the keyboard",
+    "type": "synth",
+    "library": "simple-sampler.so",
+    "params": [
+        { "name": "Attack",  "default": 0.001 },
+        { "name": "Decay",   "default": 0.1 },
+        { "name": "Sustain", "default": 1.0 },
+        { "name": "Release", "default": 0.1 },
+        { "name": "Pitch",   "default": 0.5 },
+        { "name": "Loop",    "default": 0.0 }
+    ],
+    "samples": [
+        { "path": "samples/sample_01.wav", "note": 48 },
+        { "path": "samples/sample_02.wav", "note": 49 },
+        { "path": "samples/sample_03.wav", "note": 50 },
+        { "path": "samples/sample_04.wav", "note": 51 }
+    ],
+    "ui": {
+        "accent": [50, 200, 120]
+    }
+}

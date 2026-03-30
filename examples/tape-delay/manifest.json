@@ -1,0 +1,18 @@
+{
+    "name": "Tape Delay",
+    "author": "PocketDAW",
+    "version": "1.0.0",
+    "description": "Warm stereo tape delay with low-pass filtered feedback and stereo spread",
+    "type": "effect",
+    "library": "tape-delay.so",
+    "params": [
+        { "name": "Time",     "default": 0.35 },
+        { "name": "Feedback", "default": 0.45 },
+        { "name": "Mix",      "default": 0.30 },
+        { "name": "Tone",     "default": 0.40 },
+        { "name": "Spread",   "default": 0.50 }
+    ],
+    "ui": {
+        "accent": [60, 180, 255]
+    }
+}

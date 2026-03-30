@@ -1,0 +1,14 @@
+{
+    "name": "Pulse Ring",
+    "author": "PocketDAW",
+    "version": "1.0",
+    "description": "Expanding rings that pulse with bass, color shifts with melody",
+    "shader": "shader.frag",
+    "fps": 30,
+    "blend": "replace",
+    "params": [
+        { "name": "Ring Count", "min": 0.0, "max": 1.0, "default": 0.3 },
+        { "name": "Color Speed", "min": 0.0, "max": 1.0, "default": 0.2 }
+    ],
+    "tags": ["rings", "bass", "colorful", "geometric"]
+}

@@ -1,0 +1,70 @@
+{
+    "name": "Granular",
+    "author": "PocketDAW",
+    "version": "1.0",
+    "description": "Granular synthesis engine \u2014 overlapping micro-grains create evolving textures and atmospheres",
+    "params": [
+        {
+            "name": "Density",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Grain Size",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.3
+        },
+        {
+            "name": "Pitch Spread",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.1
+        },
+        {
+            "name": "Position",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Attack",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.1
+        },
+        {
+            "name": "Release",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.4
+        },
+        {
+            "name": "Stereo",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.5
+        },
+        {
+            "name": "Texture",
+            "min": 0.0,
+            "max": 1.0,
+            "default": 0.2
+        }
+    ],
+    "tags": [
+        "granular",
+        "texture",
+        "ambient",
+        "experimental"
+    ],
+    "ui": {
+        "accent": [
+            255,
+            120,
+            40
+        ],
+        "layout": "knobs"
+    }
+}
