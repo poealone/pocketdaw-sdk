@@ -40,6 +40,7 @@ aarch64-linux-gnu-gcc -shared -fPIC -O2 -o my-plugin.so simple-sampler.c -lm
 
 | File | Version | Description |
 |------|---------|-------------|
+| `pocketdaw.h` | SDK v3 — unified header (synths + FX + visuals) |
 | `pdsynth_api.h` | v2 | Synth/sampler plugin API — MIDI input, audio output, sample loading |
 | `pdfx_api.h` | v1 | Effects plugin API — stereo audio processing in the mixer FX chain |
 
