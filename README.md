@@ -15,6 +15,37 @@ Build custom synths, effects, and visualizers for [PocketDAW](https://pocketdaw.
 - [Themes & Skins](http://docs.pocketdaw.net/#/sdk/themes)
 - [Visualizer Shaders](http://docs.pocketdaw.net/#/sdk/visualizers)
 
+
+## SDK v3.1 — Desktop Mouse & Touch
+
+> Released with PocketDAW v0.4.0 · No breaking changes — v3.0 plugins work without recompilation.
+
+### What's New in v3.1
+
+**`PD_SDK_VERSION_MINOR`** bumped to `1`
+
+#### How Plugin Editors Work on Desktop
+
+**Knob layout (≤12 params)**
+- Click knob → focus/select
+- Vertical drag → adjust value (`0.005` per pixel)
+- Scroll wheel → fine adjust
+
+**Slider layout (>12 params)**
+- Click row → select param
+- Drag value bar → set directly
+
+**Custom draw page (`pdsynth_draw` returning `1`)**
+- Host does NOT intercept mouse on your custom area
+- Plugin owns the full page — handle input in your draw callback
+- `PdDrawContext.x/y/w/h` gives your render bounds
+
+**Touch**
+- Single tap = left click
+- Long press 500ms = right click / context menu
+
+No new exports required — all mouse/touch routing is handled by the host.
+
 ## Quick Start
 
 ```bash
