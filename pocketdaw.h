@@ -57,6 +57,14 @@
  *  v3.1 — Desktop mouse/touch support (host-side, no new plugin exports)
  *          Knob click-to-focus, vertical drag to adjust (0.005/px),
  *          all overlay menus clickable, piano roll mouse editing
+ *  v4.0 — Transport + MIDI access for plugins (PdHostV4, PdFxHostV2)
+ *          pdfx_transport_changed, pdfx_draw_overlay, editor overlay context
+ *  v4.1 — Audio host access (PdHostAudio): device enumeration, track audio,
+ *          capture API (open/close/read), write_to_sample_slot
+ *  v4.2 — Visual engine integration (PdHostViz): plugin layers, waveform/scope,
+ *          plugin scope restriction (MIDI vs Sample editor)
+ *  v4.3 — Pattern resize (get/set_pattern_step_count), transport_changed
+ *          callbacks fired by host, armed recording workflow, pdfx_draw export
  */
 
 #ifndef POCKETDAW_H
@@ -72,8 +80,8 @@ extern "C" {
  * VERSION
  * ═══════════════════════════════════════════════════════════ */
 
-#define PD_SDK_VERSION          3       /* This header version */
-#define PD_SDK_VERSION_MINOR    5       /* v4.2 — visual engine integration */
+#define PD_SDK_VERSION          4       /* Major SDK version */
+#define PD_SDK_VERSION_MINOR    3       /* v4.3 — capture, transport callbacks, pattern resize */
 #define PDSYNTH_API_VERSION     3       /* Synth API version */
 #define PDSYNTH_API_VERSION_MIN 1       /* Minimum compatible synth version */
 #define PDFX_API_VERSION        2       /* FX API version */
@@ -87,6 +95,8 @@ extern "C" {
 #define PD_MAX_FX_PARAMS   16           /* Max params per FX plugin */
 #define PD_MAX_SAMPLES    128           /* Max samples a synth plugin can load */
 #define PD_MAX_NAME        64           /* Max length of name strings */
+#define PD_MAX_SAMPLE_SLOTS 16          /* Audio sample slots (0-15) */
+#define PD_MAX_PATTERN_STEPS 64         /* Maximum steps per pattern */
 #define PD_VIZ_BUF_LEN    128          /* Samples in the scope ring buffer */
 
 /* ═══════════════════════════════════════════════════════════
@@ -294,6 +304,9 @@ typedef struct {
     int   (*get_sample_rate)(void* hostData);          /* e.g. 44100                      */
     void  (*request_play)(void* hostData);             /* Deferred play (next frame)      */
     void  (*request_stop)(void* hostData);             /* Deferred stop (next frame)      */
+    /* v4.3 — Pattern resizing */
+    int   (*get_pattern_step_count)(void* hostData);   /* Current pattern step count       */
+    void  (*set_pattern_step_count)(void* hostData, int steps); /* Expand/shrink pattern  */
 } PdHostTransport;
 
 /* ═══════════════════════════════════════════════════════════
@@ -370,14 +383,44 @@ typedef struct {
     int         (*get_current_sample_rate)(void* hostData);
     int         (*get_current_buffer_size)(void* hostData);
 
-    /* ── Recording / Capture (main thread) ──────────────── */
+    /* ── Recording / Capture ─────────────────────────────── */
+    /** Open a capture device for recording/monitoring.
+     *  Call when arming — keep open for input metering.
+     *  Returns: 0 on success, -1 on failure.
+     *  Thread: safe from any thread (uses atomic state). */
     int   (*open_capture)(void* hostData, int deviceIndex);
+
+    /** Close the capture device. Call on disarm or plugin destroy. */
     void  (*close_capture)(void* hostData);
+
+    /** Check if a capture device is currently open. Returns 1/0. */
     int   (*is_capturing)(void* hostData);
+
+    /** Read captured audio. Dequeues from SDL capture queue.
+     *  Handles S16/F32/U8 format conversion and mono→stereo expansion.
+     *  Returns: number of frames read (0 = no data available, not an error).
+     *  Thread: safe from any thread. */
     int   (*read_capture)(void* hostData, float* outL, float* outR, int maxFrames);
+
+    /** Write float audio data to a sample slot (0 to PD_MAX_SAMPLE_SLOTS-1).
+     *  Converts float→S16 PCM, creates Mix_Chunk, loads into audio engine.
+     *  After writing, the waveform is visible in the sample editor.
+     *  Returns: 0 on success, -1 on failure. */
     int   (*write_to_sample_slot)(void* hostData, int slot,
                                   const float* dataL, const float* dataR,
                                   int frames, int sampleRate);
+
+    /* v4.4 — Track-level input routing */
+    /** Get the input device assigned to a track (-1 = none). */
+    int   (*get_track_input_device)(void* hostData, int trackIndex);
+    /** Check if a track is armed for recording. Returns 1/0. */
+    int   (*is_track_armed)(void* hostData, int trackIndex);
+    /** Read captured audio from the track's shared buffer.
+     *  The host reads from SDL once per audio frame and stores in a per-track
+     *  buffer. Multiple plugins can read from this without contention.
+     *  Returns number of frames available (0 if no data). */
+    int   (*read_track_capture)(void* hostData, int trackIndex,
+                                float* outL, float* outR, int maxFrames);
 } PdHostAudio;
 
 /* ═══════════════════════════════════════════════════════════
@@ -842,6 +885,30 @@ void         pdfx_get_accent_color(PdFxInstance inst,
                                    uint8_t* r, uint8_t* g, uint8_t* b);
 const char*  pdfx_format_param(PdFxInstance inst, int index);
 const char*  pdfx_param_group(int index);
+/* v2.2 — custom draw (receives SDL_Renderer* separately from PdDrawContext) */
+int          pdfx_draw(PdFxInstance inst, void* renderer, PdDrawContext* ctx);
+
+/* ── Optional FX Exports (v4.5 — Plugin Capabilities) ──── */
+
+/** Plugin capability flags — returned by pdfx_capabilities().
+ *  Tells the host what this plugin does so the host can provide
+ *  appropriate lifecycle handling without hardcoding plugin names. */
+#define PDFX_CAP_RECORDS_AUDIO    0x01  /* Plugin records audio to sample slots */
+#define PDFX_CAP_FINALIZE_ON_EXIT 0x02  /* Host should call pdfx_finalize on editor close */
+
+/** Return capability flags. 0 = basic effect (no special behavior). */
+int          pdfx_capabilities(void);
+
+/** Finalize result — tells the host what the plugin did on exit. */
+typedef struct {
+    int   targetSlot;      /* Sample slot written to (-1 = none)              */
+    int   clearSteps;      /* 1 = host should clear track steps after record  */
+    int   expandPattern;   /* 1 = host already expanded pattern (informational) */
+} PdFxFinalizeResult;
+
+/** Called by host when FX editor closes (if PDFX_CAP_FINALIZE_ON_EXIT set).
+ *  Plugin should finalize any active recording and return what it did. */
+PdFxFinalizeResult pdfx_finalize(PdFxInstance inst);
 
 /* ── Optional FX Exports (v4.0) ────────────────────────── */
 void         pdfx_set_host_v2(PdFxInstance inst, const PdFxHostV2* host);

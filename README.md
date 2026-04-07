@@ -18,7 +18,7 @@ Build custom synths, effects, and visualizers for [PocketDAW](https://pocketdaw.
 
 ## SDK v3.1 — Desktop Mouse & Touch
 
-> Released with PocketDAW v0.4.35 · No breaking changes — v3.0 plugins work without recompilation.
+> Released with PocketDAW v0.4.4 · No breaking changes — v3.0 plugins work without recompilation.
 
 ### What's New in v3.1
 
