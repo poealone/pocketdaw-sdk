@@ -16,13 +16,21 @@ Build custom synths, effects, and visualizers for [PocketDAW](https://pocketdaw.
 - [Visualizer Shaders](http://docs.pocketdaw.net/#/sdk/visualizers)
 
 
-## SDK v4.3 — Unified Header
+## SDK v4.5 — Sample Source APIs
 
-> Released with PocketDAW v0.4.4 · All plugin APIs consolidated into `pocketdaw.h`.
+> Released with PocketDAW v4.6 · Project-aware sample slot access for synth plugins.
 
-### What's New in v4.3
+### What's New in v4.5
 
-- **Unified `pocketdaw.h`** — one header for synths, FX, and visuals (1084 lines)
+- **`PdSampleSlotInfo`** — query sample slot metadata (loaded state, frame count, sample rate, channels, display name)
+- **`get_sample_slot_info()`** — retrieve metadata for any of the 16 host sample slots
+- **`get_sample_slot_name()`** — get the display name of a sample slot
+- **`pdsynth_host_sample_changed()`** — callback notifying plugins when a host sample source changes
+- Enables plugins like Re-Pitcher to browse and bind to project samples (Sample Edit, ReCorder takes) without manual file loading
+
+### v4.3 — Unified Header
+
+- **Unified `pocketdaw.h`** — one header for synths, FX, and visuals
 - Legacy `pdsynth_api.h` and `pdfx_api.h` are now redirect stubs
 - All examples updated to `#include "../../pocketdaw.h"`
 
@@ -51,7 +59,7 @@ aarch64-linux-gnu-gcc -shared -fPIC -O2 -o my-plugin.so simple-sampler.c -lm
 
 | File | Description |
 |------|-------------|
-| `pocketdaw.h` | SDK v4.3 — unified header (synths + FX + visuals) |
+| `pocketdaw.h` | SDK v4.5 — unified header (synths + FX + visuals + sample source APIs) |
 | `pdsynth_api.h` | Legacy redirect → `pocketdaw.h` |
 | `pdfx_api.h` | Legacy redirect → `pocketdaw.h` |
 

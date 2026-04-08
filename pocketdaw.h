@@ -364,6 +364,16 @@ typedef struct {
  * Track audio and peaks read from atomic scope ring buffers (thread-safe).
  * Device enumeration and capture are main-thread only.
  */
+
+/* v4.5 — Sample slot metadata (returned by get_sample_slot_info) */
+typedef struct {
+    int         loaded;      /* 1 if slot has audio, 0 if empty */
+    int         frames;      /* Total sample frames */
+    int         sampleRate;  /* Sample rate of the audio engine */
+    int         channels;    /* 1=mono, 2=stereo */
+    const char* name;        /* Display name (e.g. "kick.wav", "REC-3") */
+} PdSampleSlotInfo;
+
 typedef struct {
     void* hostData;
 
@@ -424,6 +434,13 @@ typedef struct {
      *  Returns number of frames available (0 if no data). */
     int   (*read_track_capture)(void* hostData, int trackIndex,
                                 float* outL, float* outR, int maxFrames);
+
+    /* v4.5 — Sample slot metadata + name access */
+    /** Get metadata for a sample slot (0-15).
+     *  Returns 0 on success, -1 if slot is invalid. */
+    int         (*get_sample_slot_info)(void* hostData, int slot, PdSampleSlotInfo* info);
+    /** Get the display name of a sample slot. Returns NULL if empty/invalid. */
+    const char* (*get_sample_slot_name)(void* hostData, int slot);
 } PdHostAudio;
 
 /* ═══════════════════════════════════════════════════════════
@@ -795,6 +812,11 @@ void             pdsynth_midi_cc(PdSynthInstance inst, int cc, float value);
 void             pdsynth_transport_changed(PdSynthInstance inst, const PdHostTransport* transport);
 int              pdsynth_draw_overlay(PdSynthInstance inst, const PdEditorOverlayCtx* ctx);
 void             pdsynth_get_viz_data(PdSynthInstance inst, float* outBars, int maxBars);
+
+/* ── Optional Synth Exports (v4.5) ─────────────────────── */
+/** Called by host when a global sample slot is loaded, replaced, or cleared.
+ *  Plugins that bind to host sample slots should invalidate cached data. */
+void             pdsynth_host_sample_changed(PdSynthInstance inst, int slot);
 
 /* ═══════════════════════════════════════════════════════════
  * FX PLUGIN EXPORTS
