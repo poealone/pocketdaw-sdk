@@ -1,0 +1,33 @@
+{
+    "name": "Param EQ",
+    "author": "PocketDAW",
+    "version": "1.0.0",
+    "description": "4-band visual parametric EQ with interactive frequency response curve",
+    "type": "effect",
+    "category": "filter",
+    "library": "parametric-eq.so",
+    "params": [
+        { "name": "LS Freq", "default": 0.40 },
+        { "name": "LS Gain", "default": 0.50 },
+        { "name": "LS Q",    "default": 0.32 },
+        { "name": "P1 Freq", "default": 0.35 },
+        { "name": "P1 Gain", "default": 0.50 },
+        { "name": "P1 Q",    "default": 0.50 },
+        { "name": "P2 Freq", "default": 0.45 },
+        { "name": "P2 Gain", "default": 0.50 },
+        { "name": "P2 Q",    "default": 0.50 },
+        { "name": "HS Freq", "default": 0.30 },
+        { "name": "HS Gain", "default": 0.50 },
+        { "name": "HS Q",    "default": 0.32 }
+    ],
+    "ui": {
+        "layout": "knobs",
+        "accent": [80, 180, 255],
+        "editor": {
+            "scope": false,
+            "meters": true,
+            "grMeter": false,
+            "particles": false
+        }
+    }
+}

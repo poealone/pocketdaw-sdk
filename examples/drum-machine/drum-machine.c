@@ -14,7 +14,7 @@
  * Each drum is a synthesis recipe (sine + noise + pitch envelope).
  * 8 simultaneous sounds, no polyphony needed per drum.
  */
-#include "../../pdsynth_api.h"
+#include "../../pocketdaw.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

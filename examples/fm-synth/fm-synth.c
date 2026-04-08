@@ -5,7 +5,7 @@
  *   aarch64-none-linux-gnu-gcc -shared -fPIC -O2 -o fm-synth.so fm-synth.c -lm
  */
 
-#include "../../pdsynth_api.h"
+#include "../../pocketdaw.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

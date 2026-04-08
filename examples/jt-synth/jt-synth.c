@@ -16,7 +16,7 @@
  * Accent: Red [255, 30, 60]
  */
 
-#include "../../pdsynth_api.h"
+#include "../../pocketdaw.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

@@ -279,6 +279,9 @@ typedef struct {
     /* ── Track Context (v3.3) ─────────────────────────────── */
     int      trackIndex;         /* Which track this plugin is on (-1 = unknown) */
     int      trackCount;         /* Total tracks in current pattern              */
+
+    /* ── Sidechain Context (v3.4) ─────────────────────────── */
+    int      sidechainSource;    /* Track providing sidechain input (-1 = none)  */
 } PdDrawContext;
 
 /* ═══════════════════════════════════════════════════════════

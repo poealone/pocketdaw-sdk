@@ -16,35 +16,15 @@ Build custom synths, effects, and visualizers for [PocketDAW](https://pocketdaw.
 - [Visualizer Shaders](http://docs.pocketdaw.net/#/sdk/visualizers)
 
 
-## SDK v3.1 — Desktop Mouse & Touch
+## SDK v4.3 — Unified Header
 
-> Released with PocketDAW v0.4.4 · No breaking changes — v3.0 plugins work without recompilation.
+> Released with PocketDAW v0.4.4 · All plugin APIs consolidated into `pocketdaw.h`.
 
-### What's New in v3.1
+### What's New in v4.3
 
-**`PD_SDK_VERSION_MINOR`** bumped to `1`
-
-#### How Plugin Editors Work on Desktop
-
-**Knob layout (≤12 params)**
-- Click knob → focus/select
-- Vertical drag → adjust value (`0.005` per pixel)
-- Scroll wheel → fine adjust
-
-**Slider layout (>12 params)**
-- Click row → select param
-- Drag value bar → set directly
-
-**Custom draw page (`pdsynth_draw` returning `1`)**
-- Host does NOT intercept mouse on your custom area
-- Plugin owns the full page — handle input in your draw callback
-- `PdDrawContext.x/y/w/h` gives your render bounds
-
-**Touch**
-- Single tap = left click
-- Long press 500ms = right click / context menu
-
-No new exports required — all mouse/touch routing is handled by the host.
+- **Unified `pocketdaw.h`** — one header for synths, FX, and visuals (1084 lines)
+- Legacy `pdsynth_api.h` and `pdfx_api.h` are now redirect stubs
+- All examples updated to `#include "../../pocketdaw.h"`
 
 ## Quick Start
 
@@ -69,11 +49,11 @@ aarch64-linux-gnu-gcc -shared -fPIC -O2 -o my-plugin.so simple-sampler.c -lm
 
 ## API Headers
 
-| File | Version | Description |
-|------|---------|-------------|
-| `pocketdaw.h` | SDK v3 — unified header (synths + FX + visuals) |
-| `pdsynth_api.h` | v2 | Synth/sampler plugin API — MIDI input, audio output, sample loading |
-| `pdfx_api.h` | v1 | Effects plugin API — stereo audio processing in the mixer FX chain |
+| File | Description |
+|------|-------------|
+| `pocketdaw.h` | SDK v4.3 — unified header (synths + FX + visuals) |
+| `pdsynth_api.h` | Legacy redirect → `pocketdaw.h` |
+| `pdfx_api.h` | Legacy redirect → `pocketdaw.h` |
 
 ## Examples
 
@@ -86,22 +66,22 @@ aarch64-linux-gnu-gcc -shared -fPIC -O2 -o my-plugin.so simple-sampler.c -lm
 | `drum-machine` | Sampler | Multi-sample drum kit with MIDI note mapping |
 | `simple-sampler` | Sampler | Basic chromatic sampler |
 | `tape-delay` | Effect | Warm tape-style delay with filtered feedback |
-| `jt-sidechain` | Effect | Sidechain compressor with 6 presets (pump, duck, gate) |
+| `parametric-eq` | Effect | 4-band parametric EQ with interactive frequency response |
 | `pulse-ring` | Visualizer | Audio-reactive GLSL shader (bass rings + beat flash) |
 
 Each example includes source code, a pre-compiled ARM64 `.so`, and a `manifest.json`.
 
 ## Plugin Types
 
-### Synths (`pdsynth_api.h`)
+### Synths (`pocketdaw.h` — PD_SYNTH exports)
 Generate audio from MIDI notes. Placed on MIDI tracks.
 - Required: `pdsynth_create`, `pdsynth_destroy`, `pdsynth_process`, `pdsynth_note`
-- Optional: presets, waveform visualization, host sample loading (v2)
+- Optional: presets, waveform visualization, host sample loading, custom draw
 
-### Effects (`pdfx_api.h`)
+### Effects (`pocketdaw.h` — PD_FX exports)
 Process stereo audio in the mixer FX chain. 2 slots per channel strip.
 - Required: `pdfx_create`, `pdfx_destroy`, `pdfx_process`
-- Optional: presets, parameter names
+- Optional: presets, parameter names, sidechain input
 
 ### Visualizers (GLSL)
 Audio-reactive fragment shaders rendered via OpenGL ES 2.0.

@@ -16,7 +16,7 @@
  *   aarch64-none-linux-gnu-gcc -shared -fPIC -O2 -o simple-sampler.so simple-sampler.c -lm
  */
 
-#include "../../pdsynth_api.h"
+#include "../../pocketdaw.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

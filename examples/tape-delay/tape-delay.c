@@ -8,7 +8,7 @@
  *   aarch64-none-linux-gnu-gcc -shared -fPIC -O2 -o tape-delay.so tape-delay.c -lm
  */
 
-#include "../../pdfx_api.h"
+#include "../../pocketdaw.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

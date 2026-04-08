@@ -5,7 +5,7 @@
  * Crossfade between adjacent waveforms via Position parameter.
  * 4-voice polyphony with ADSR envelope.
  */
-#include "../../pdsynth_api.h"
+#include "../../pocketdaw.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

@@ -5,7 +5,7 @@
  * Creates evolving textures, pads, and atmospheric sounds.
  * 4 grains running simultaneously, each with randomized parameters.
  */
-#include "../../pdsynth_api.h"
+#include "../../pocketdaw.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
